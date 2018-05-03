@@ -8,12 +8,12 @@
     using Xunit.ScenarioReporting;
 
     [Collection("AggregateTest")]
-    public sealed class UC5CashDepositedTestCases : IDisposable
+    public sealed class UC6CashWithDrawTestCases : IDisposable
     {
         readonly Guid _accountId;
         readonly EventStoreScenarioRunner<Account> _runner;
 
-        public UC5CashDepositedTestCases(EventStoreFixture fixture)
+        public UC6CashWithDrawTestCases(EventStoreFixture fixture)
         {
             _accountId = Guid.NewGuid();
             _runner = new EventStoreScenarioRunner<Account>(
@@ -30,8 +30,8 @@
         [Theory]
         [InlineData(0.05)]
         [InlineData(50)]
-        [InlineData(8000)]
-        public async Task CanDepositCash(double amount)
+        [InlineData(500)]
+        public async Task CanWithdrawCash(double amount)
         {
             var created = new AccountCreated(CorrelatedMessage.NewRoot())
             {
@@ -39,13 +39,13 @@
                 AccountHolderName = "Parth Sheth"
             };
 
-            var cmd = new DepositCash
+            var cmd = new WithdrawCash
             {
                 AccountId = _accountId,
                 Amount = Convert.ToDecimal(amount)
             };
 
-            var limitSet = new CashDeposited(cmd)
+            var limitSet = new CashWithdrawn(cmd)
             {
                 AccountId = _accountId,
                 Amount = cmd.Amount
@@ -58,10 +58,10 @@
 
         [Theory]
         [InlineData(0)]
-        [InlineData(-0.07)]
-        [InlineData(-700)]
-        [InlineData(-7000)]
-        public async Task CannotDepositCashWithNonPositiveAmount(double amount)
+        [InlineData(-0.05)]
+        [InlineData(-50)]
+        [InlineData(-500)]
+        public async Task CannotWithdrawCashWithNonPositiveAmount(double amount)
         {
             var created = new AccountCreated(CorrelatedMessage.NewRoot())
             {
@@ -69,24 +69,24 @@
                 AccountHolderName = "Parth Sheth"
             };
 
-            var cmd = new DepositCash
+            var cmd = new WithdrawCash
             {
                 AccountId = _accountId,
                 Amount = Convert.ToDecimal(amount)
             };
 
             await _runner.Run(
-                def => def.Given(created).When(cmd).Throws(new ValidationException("Cash deposited must be a positive amount"))
+                def => def.Given(created).When(cmd).Throws(new ValidationException("Cash withdrawn must be a positive amount"))
             );
         }
 
         [Fact]
-        public async Task CannotDepositCashIntoInvalidAccount()
+        public async Task CannotWithdrawCashIntoInvalidAccount()
         {
-            var cmd = new DepositCash
+            var cmd = new WithdrawCash
             {
                 AccountId = _accountId,
-                Amount = Convert.ToDecimal(100m)
+                Amount = Convert.ToDecimal(500)
             };
 
             await _runner.Run(

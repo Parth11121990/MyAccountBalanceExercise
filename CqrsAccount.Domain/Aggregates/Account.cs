@@ -88,5 +88,18 @@
                 Amount = amount
             });
         }
+
+        public void WithdrawCash(decimal amount, CorrelatedMessage source)
+        {
+            if (amount <= 0)
+                throw new ValidationException("Cash withdrawn must be a positive amount");
+
+            Raise(new CashWithdrawn(source)
+            {
+                AccountId = Id,
+                Amount = amount
+            });
+        }
+
     }
 }

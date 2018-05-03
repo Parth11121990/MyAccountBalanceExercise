@@ -28,9 +28,9 @@
         }
 
         [Theory]
-        [InlineData(0.01)]
-        [InlineData(100)]
-        [InlineData(100000000)]
+        [InlineData(0.05)]
+        [InlineData(300)]
+        [InlineData(50000)]
         public async Task CanDepositCheque(double amount)
         {
             var created = new AccountCreated(CorrelatedMessage.NewRoot())
@@ -58,9 +58,9 @@
 
         [Theory]
         [InlineData(0)]
-        [InlineData(-0.01)]
-        [InlineData(-100)]
-        [InlineData(-100000000)]
+        [InlineData(-0.6)]
+        [InlineData(-600)]
+        [InlineData(-5500)]
         public async Task CannotDepositCashWithNonPositiveAmount(double amount)
         {
             var created = new AccountCreated(CorrelatedMessage.NewRoot())
