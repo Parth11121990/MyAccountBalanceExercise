@@ -7,8 +7,7 @@
     using ReactiveDomain;
     using ReactiveDomain.EventStore;
     using ReactiveDomain.Foundation;
-    using ReactiveDomain.Foundation.EventStore;
-
+    
     public class EventStoreFixture : IDisposable
     {
         readonly StreamStoreRepository _repo;
